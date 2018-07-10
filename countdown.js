@@ -3,16 +3,17 @@ var WINDOW_HEIGHT = 768;
 var RADIUS = 8;
 var MARGIN_TOP = 60;
 var MARGIN_LEFT = 30;
-const endTime = new Date(2018,6,8,18,47,52);
+const endTime = new Date(2018,6,11,18,47,52);
 var curShowTimeSeconds = 0;
 window.onload = function () {
     var canvas = document.getElementById('canvas');
     var context = canvas.getContext('2d');
     canvas.width = WINDOW_WIDTH;
     canvas.height = WINDOW_HEIGHT;
-
-    curShowTimeSeconds = getCurShowTimeSeconds();
-    render(context);
+    setInterval(function(){
+        // render(context);
+        update(context);
+    }, 50);
 }
 
 function getCurShowTimeSeconds(){
@@ -21,12 +22,48 @@ function getCurShowTimeSeconds(){
     return ret >=0 ? ret : 0;
 }
 
-function render(cxt) {
+var ball = {
+    x: 450,
+    y: 50,
+    r: 20,
+    vx: -2,
+    vy: 0,
+    g: 2
+}
+function update(cxt){
+    // var nextShowTimeSeconds = getCurShowTimeSeconds();
+    // var nextHours = parseInt(nextShowTimeSeconds / 3600);
+    // var nextMinutes = parseInt(nextShowTimeSeconds % 3600 / 60);
+    // var nextSeconds = parseInt(nextShowTimeSeconds % 60);
 
+    // var curHours = parseInt(curShowTimeSeconds / 3600);
+    // var curMinutes = parseInt(curShowTimeSeconds % 3600 / 60);
+    // var curSeconds = parseInt(curShowTimeSeconds % 60);
+
+    // if(nextSeconds != curSeconds){
+    //     curShowTimeSeconds = nextShowTimeSeconds;
+    // }
+
+    cxt.clearRect(0,0,WINDOW_WIDTH,WINDOW_HEIGHT);
+    cxt.beginPath();
+    cxt.fillStyle = "rgb(0, 102,153)";
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+    ball.vy += ball.g;
+    if(ball.y >= cxt.canvas.height - ball.r) {
+        ball.y = cxt.canvas.height - ball.r;
+        ball.vy = -ball.vy * 0.5;
+    }
+    cxt.arc(ball.x, ball.y, ball.r, 0, 2 * Math.PI)
+    cxt.closePath();
+    cxt.fill();
+}
+
+function render(cxt) {
+    cxt.clearRect(0,0,WINDOW_WIDTH,WINDOW_HEIGHT);
     var hours = parseInt(curShowTimeSeconds / 3600);
-    console.log(hours)
-    var minutes = 30;
-    var seconds = 56;
+    var minutes = parseInt(curShowTimeSeconds % 3600 / 60);
+    var seconds = parseInt(curShowTimeSeconds % 60);
 
     renderDigit(MARGIN_LEFT, MARGIN_TOP, parseInt(hours / 10), cxt);
     renderDigit(MARGIN_LEFT + 15*(RADIUS+1), MARGIN_TOP, parseInt(hours % 10), cxt);
